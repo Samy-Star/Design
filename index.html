@@ -222,6 +222,101 @@ button{cursor:pointer}
   .head-b{padding:20px}
   .reset{display:none}
 }
+/* ==========================================================================
+   >>> NOUVELLE SECTION : « DESIGNS DU JOUR » — STYLES (ajout cumulatif) <<<
+   Tout est préfixé .fd- : aucune règle existante n'est modifiée.
+   ========================================================================== */
+.fd-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Entrée de navigation (injectée dans la sidebar) */
+.fd-nav{display:flex;align-items:center;gap:10px;width:100%;margin-top:14px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);font-weight:700;font-size:13.5px;text-align:left;transition:.15s}
+.fd-nav:hover{border-color:var(--accent)}
+.fd-nav[aria-current="page"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.fd-nav .n{margin-left:auto;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--surface);color:var(--muted)}
+
+/* Bandeau d'invitation sur l'accueil */
+.fd-teaser{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow-sm);margin-bottom:28px}
+.fd-teaser b{display:block;font-size:15px}
+.fd-teaser span{font-size:13px;color:var(--muted)}
+
+/* En-tête de la vue */
+.fd-top h2{margin:0 0 4px;font-size:28px;line-height:1.2}
+.fd-top p{margin:0 0 20px;color:var(--muted);font-size:15px}
+
+/* Zone de publication */
+.fd-composer{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:28px}
+.fd-composer>h3{margin:0;padding:18px 22px 0;font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+.fd-cgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px;padding:16px 22px 22px}
+.fd-drop{display:grid;place-items:center;text-align:center;min-height:200px;border:2px dashed var(--border);border-radius:14px;background:var(--surface-2);padding:20px;cursor:pointer;transition:.15s}
+.fd-drop:hover,.fd-drop.over,.fd-drop:focus-within{border-color:var(--accent);background:var(--accent-soft)}
+.fd-drop .ph{display:grid;gap:6px;justify-items:center;color:var(--muted);font-size:13px}
+.fd-drop .ph svg{width:44px;height:44px;color:var(--accent);margin-bottom:4px}
+.fd-drop .ph b{color:var(--text);font-size:15px}
+.fd-stage{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin-top:12px}
+.fd-tile{position:relative;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);overflow:hidden;box-shadow:var(--shadow-sm)}
+.fd-stage{align-items:start}
+.fd-tile .box{position:relative;aspect-ratio:1}
+.fd-tile img{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);object-fit:contain;display:block;border-radius:6px}
+.fd-tile small{display:block;padding:5px 8px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fd-tile .rm{position:absolute;right:6px;top:6px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(15,16,23,.78);color:#fff;font-size:12px;line-height:1}
+.fd-tile .rm:hover{background:#d64545}
+.fd-fld{display:grid;gap:6px;margin-bottom:14px}
+.fd-fld>label{font-size:12.5px;font-weight:700;color:var(--muted)}
+.fd-fld input[type=text],.fd-fld textarea,.fd-fld select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);outline:none;resize:vertical}
+.fd-fld textarea{font-family:inherit;line-height:1.5}
+.fd-fld input:focus,.fd-fld textarea:focus,.fd-fld select:focus{border-color:var(--accent);background:var(--surface)}
+.fd-fld .cnt{font-size:11.5px;color:var(--muted);text-align:right}
+.fd-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 22px;border-top:1px solid var(--border);background:var(--surface-2)}
+.fd-pub{border:1px solid var(--accent);background:var(--accent);color:var(--accent-text);padding:11px 20px;border-radius:12px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;gap:8px;transition:.15s;box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 35%,transparent)}
+.fd-pub:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.fd-pub[aria-disabled="true"]{opacity:.5;cursor:not-allowed;box-shadow:none;transform:none;filter:none}
+.fd-pub.loading{pointer-events:none;opacity:.85}
+.fd-pub.loading:before{content:"";width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:fdspin .7s linear infinite}
+.fd-pub.ok{background:var(--done);border-color:var(--done);color:#fff;box-shadow:none}
+@keyframes fdspin{to{transform:rotate(360deg)}}
+.fd-hint{font-size:13px;color:var(--muted)}
+.fd-hint.err{color:#d64545;font-weight:600}
+
+/* Flux des designs : colonnes fluides, chaque carte garde la hauteur de son image */
+.fd-feed{columns:2 340px;column-gap:20px}
+.fd-card{break-inside:avoid;margin:0 0 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .15s}
+.fd-card:hover{box-shadow:var(--shadow)}
+.fd-chead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 12px}
+.fd-chead h4{margin:0;font-size:15.5px;line-height:1.3;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.fd-chead small{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.fd-day{flex:none;border:0;font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.fd-day:hover{filter:brightness(.96)}
+
+/* ----- CADRE ADAPTATIF -----
+   --ar = ratio largeur/hauteur de l'image (injecté en JS, borné entre 0.4 et 3).
+   Le cadre prend la largeur disponible, plafonne sa hauteur à --maxh et réduit
+   sa largeur en proportion (max-width = --maxh × ratio) : le ratio est donc
+   toujours respecté. L'image est affichée en object-fit: contain : jamais
+   déformée, jamais rognée. */
+.fd-media{position:relative;background:var(--surface-2);padding:16px;border-block:1px solid var(--border)}
+.fd-frame{--maxh:min(70vh,560px);--ar:1;margin:0 auto;width:100%;aspect-ratio:var(--ar);max-height:var(--maxh);max-width:calc(var(--maxh) * var(--ar));border-radius:12px;overflow:hidden;background:var(--surface);border:1px solid var(--border);box-shadow:0 1px 2px rgba(20,22,50,.06),0 10px 28px rgba(20,22,50,.12)}
+.fd-frame img{width:100%;height:100%;object-fit:contain;display:block}
+.fd-badge{display:block;width:max-content;max-width:100%;margin:12px auto 0;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:11.5px;padding:3px 10px;border-radius:999px}
+.fd-arrow{position:absolute;top:calc(50% - 14px);transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow-sm);font-size:16px;display:grid;place-items:center}
+.fd-arrow:hover{border-color:var(--accent);color:var(--accent)}
+.fd-arrow.prev{left:8px}
+.fd-arrow.next{right:8px}
+.fd-thumbs{display:flex;gap:8px;padding:12px 16px 0;overflow-x:auto}
+.fd-thumbs button{flex:none;width:52px;height:52px;border:2px solid transparent;border-radius:10px;background:var(--surface-2);padding:2px;display:grid;place-items:center}
+.fd-thumbs button[aria-current="true"]{border-color:var(--accent)}
+.fd-thumbs img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;display:block}
+.fd-cbody{padding:14px 16px 16px}
+.fd-cbody p{margin:0 0 12px;font-size:14.5px;white-space:pre-wrap}
+.fd-cfoot{display:flex;gap:8px;flex-wrap:wrap}
+.fd-cfoot .btn{padding:7px 13px;font-size:13px}
+.fd-empty{text-align:center;color:var(--muted);border:2px dashed var(--border);border-radius:var(--radius);padding:40px 20px}
+@media (max-width:760px){
+  .fd-cgrid{grid-template-columns:1fr}
+  .fd-top h2{font-size:23px}
+  .fd-feed{columns:1}
+  .fd-actions .btn,.fd-actions .fd-pub{flex:1 1 auto;justify-content:center}
+}
+/* >>> FIN DE LA SECTION « DESIGNS DU JOUR » — STYLES <<< */
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -1039,6 +1134,303 @@ document.addEventListener("paste", e => {
   if (f){ e.preventDefault(); loadImage(f, parseInt(box.dataset.day, 10)); }
 });
 window.addEventListener("hashchange", () => { confirmId = 0; editId = 0; });
+
+/* ==========================================================================
+   >>> NOUVELLE SECTION : « DESIGNS DU JOUR » — LOGIQUE (ajout cumulatif) <<<
+   Route #/designs : zone de publication multi-images + flux de cartes à
+   cadre adaptatif. Intégration sans modifier le code existant :
+     - un bouton est injecté dans la sidebar,
+     - renderHome() est enveloppée (route #/designs → renderFeed(), sinon
+       rendu d'origine + bandeau d'invitation),
+     - tous les noms de variables / fonctions sont préfixés fd / FEED.
+   Données : localStorage « figma30.feed.v1 » (images compressées en JPEG).
+   ========================================================================== */
+const FEED_KEY = "figma30.feed.v1";
+const FD_MAX_IMAGES = 8;
+let feed = [];
+try {
+  feed = JSON.parse(localStorage.getItem(FEED_KEY) || "[]");
+  if (!Array.isArray(feed)) feed = [];
+} catch (e) { feed = []; }
+feed = feed.filter(p => p && typeof p.id === "string" && Array.isArray(p.images) && p.images.length &&
+  p.images.every(i => i && typeof i.src === "string" && i.src.indexOf("data:image/") === 0 && i.w > 0 && i.h > 0));
+
+let fdStage = [];                              // images en attente de publication
+let fdForm = {title:"", caption:"", day:""};   // champs du formulaire
+let fdBusy = false;
+let fdMsg = {text:"", err:false};
+const fdIdx = {};                              // image affichée par publication
+
+const fdIsRoute = () => location.hash === "#/designs";
+function fdSave(){ try { localStorage.setItem(FEED_KEY, JSON.stringify(feed)); return true; } catch (e) { return false; } }
+function fdKind(w, h){ const r = w / h; return Math.abs(r - 1) < 0.06 ? "Carré" : (r > 1 ? "Paysage" : "Portrait"); }
+/* Ratio injecté dans le cadre. Borné pour éviter les cadres démesurés ; l'image
+   reste entière grâce à object-fit: contain. */
+function fdAr(im){ return Math.min(3, Math.max(0.4, im.w / im.h)); }
+
+/* ---------- Lecture / compression des images ---------- */
+function fdReadFile(file){
+  return new Promise((resolve, reject) => {
+    if (!/^image\//.test(file.type)) return reject(new Error("type"));
+    if (file.size > 20 * 1024 * 1024) return reject(new Error("size"));
+    const fr = new FileReader();
+    fr.onerror = () => reject(new Error("read"));
+    fr.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("decode"));
+      img.onload = () => {
+        const k = Math.min(1, 1400 / Math.max(img.width, img.height));
+        const w = Math.max(1, Math.round(img.width * k)), h = Math.max(1, Math.round(img.height * k));
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        const x = c.getContext("2d");
+        x.fillStyle = "#ffffff"; x.fillRect(0, 0, w, h); x.drawImage(img, 0, 0, w, h);
+        resolve({src:c.toDataURL("image/jpeg", 0.82), w, h, name:file.name.replace(/\.[^.]+$/, "")});
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+async function fdAddFiles(files){
+  const list = Array.from(files || []);
+  if (!list.length) return;
+  let skipped = 0;
+  for (const f of list){
+    if (fdStage.length >= FD_MAX_IMAGES){ toast("Maximum " + FD_MAX_IMAGES + " images par publication."); break; }
+    try { fdStage.push(await fdReadFile(f)); } catch (e) { skipped++; }
+  }
+  if (skipped) toast(skipped + " fichier" + (skipped > 1 ? "s" : "") + " ignoré" + (skipped > 1 ? "s" : "") + " (image invalide ou > 20 Mo)");
+  fdMsg = {text:"", err:false};
+  fdRenderComposer();
+}
+
+/* ---------- Images de démonstration (portrait, paysage, carré, panorama) ---------- */
+function fdDemoImage(w, h, label, c1, c2){
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const x = c.getContext("2d"), m = Math.min(w, h);
+  if (!x) return null;
+  const g = x.createLinearGradient(0, 0, w, h); g.addColorStop(0, c1); g.addColorStop(1, c2);
+  x.fillStyle = g; x.fillRect(0, 0, w, h);
+  x.fillStyle = "rgba(255,255,255,.18)";
+  x.beginPath(); x.arc(w * .78, h * .25, m * .28, 0, Math.PI * 2); x.fill();
+  x.beginPath(); x.arc(w * .2, h * .82, m * .2, 0, Math.PI * 2); x.fill();
+  x.fillStyle = "#fff"; x.textAlign = "center"; x.textBaseline = "middle";
+  x.font = "700 " + Math.round(m * .1) + "px system-ui,sans-serif"; x.fillText(label, w / 2, h / 2);
+  x.font = "500 " + Math.round(m * .045) + "px system-ui,sans-serif"; x.fillText(w + " × " + h, w / 2, h / 2 + m * .1);
+  return {src:c.toDataURL("image/jpeg", 0.8), w, h, name:"demo-" + label.toLowerCase()};
+}
+function fdLoadDemo(){
+  if (FD_MAX_IMAGES - fdStage.length < 4){ toast("Retire quelques images pour charger l'exemple."); return; }
+  const demos = [
+    fdDemoImage(800, 1000, "Portrait", "#5b4bff", "#ff5fa2"),
+    fdDemoImage(1200, 800, "Paysage", "#00c2c7", "#6a3fd6"),
+    fdDemoImage(900, 900, "Carré", "#ff8a00", "#e5007d"),
+    fdDemoImage(1600, 600, "Panorama", "#14452f", "#d4af37")
+  ].filter(Boolean);
+  if (!demos.length){ toast("Exemple indisponible dans ce navigateur."); return; }
+  fdStage = fdStage.concat(demos);
+  if (!fdForm.title) fdForm.title = "Exemple : quatre formats";
+  if (!fdForm.caption) fdForm.caption = "Portrait, paysage, carré et panorama : chaque cadre s'adapte au ratio de l'image, sans déformation ni rognage.";
+  fdMsg = {text:"", err:false};
+  fdRenderComposer();
+}
+
+/* ---------- Zone de publication ---------- */
+function fdRenderComposer(){
+  const box = $("#fdComposer"); if (!box) return;
+  const ready = fdStage.length > 0;
+  const dayOpts = '<option value="">— Aucun (design libre) —</option>' + DAYS.map(d =>
+    '<option value="' + d.id + '"' + (String(d.id) === String(fdForm.day) ? " selected" : "") + '>Jour ' + d.id + " · " + esc(d.fete) + '</option>').join("");
+  const tiles = fdStage.map((im, i) =>
+    '<div class="fd-tile"><div class="box"><img src="' + esc(im.src) + '" alt="Aperçu : ' + esc(im.name) + '"></div>' +
+    '<small>' + fdKind(im.w, im.h) + " · " + im.w + "×" + im.h + '</small>' +
+    '<button type="button" class="rm" data-fd-rm="' + i + '" aria-label="Retirer cette image">✕</button></div>').join("");
+  const hint = fdMsg.text || (ready ? "Prêt : " + fdStage.length + " image" + (fdStage.length > 1 ? "s" : "") + " à publier dans le flux." : "Ajoute au moins une image pour publier.");
+  box.innerHTML =
+    '<h3>Publier un design</h3>' +
+    '<div class="fd-cgrid"><div>' +
+      '<label class="fd-drop" id="fdDrop" for="fdFile"><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>' +
+        '<b>Glisse tes images ici</b><span>ou clique pour en choisir une ou plusieurs · PNG, JPG, WebP</span><span>Jusqu\'à ' + FD_MAX_IMAGES + ' images · tu peux aussi coller avec Ctrl/Cmd + V</span></div></label>' +
+      '<input class="fd-sr" type="file" id="fdFile" accept="image/*" multiple>' +
+      (ready ? '<div class="fd-stage">' + tiles + '</div>' : '') +
+    '</div><div>' +
+      '<div class="fd-fld"><label for="fdTitle">Titre</label><input type="text" id="fdTitle" maxlength="60" placeholder="Ex. : Carte de vœux Maison Aurélie" value="' + esc(fdForm.title) + '"></div>' +
+      '<div class="fd-fld"><label for="fdCaption">Description</label><textarea id="fdCaption" rows="3" maxlength="280" placeholder="Ton intention, tes choix de design…">' + esc(fdForm.caption) + '</textarea><span class="cnt" id="fdCount">' + fdForm.caption.length + ' / 280</span></div>' +
+      '<div class="fd-fld"><label for="fdDay">Jour du challenge (facultatif)</label><select id="fdDay">' + dayOpts + '</select></div>' +
+    '</div></div>' +
+    '<div class="fd-actions">' +
+      '<button type="button" class="fd-pub" id="fdPublish" aria-disabled="' + (!ready) + '">Publier le design →</button>' +
+      '<button type="button" class="btn" data-fd-demo>Charger un exemple</button>' +
+      (ready || fdForm.title || fdForm.caption ? '<button type="button" class="btn" data-fd-clear>Vider</button>' : '') +
+      '<span class="fd-hint' + (fdMsg.err ? " err" : "") + '" role="status">' + esc(hint) + '</span>' +
+    '</div>';
+}
+
+/* ---------- Flux des publications ---------- */
+function fdCardHtml(p){
+  const n = p.images.length, i = Math.min(fdIdx[p.id] || 0, n - 1), im = p.images[i];
+  const d = p.day ? dayById(p.day) : null;
+  const when = new Date(p.at).toLocaleString("fr-FR", {day:"numeric", month:"long", hour:"2-digit", minute:"2-digit"});
+  const title = p.title || "Sans titre";
+  const multi = n > 1;
+  return '<article class="fd-card" data-fd-post="' + esc(p.id) + '">' +
+    '<div class="fd-chead"><div style="min-width:0"><h4>' + esc(title) + '</h4><small>' + esc(when) + '</small></div>' +
+      (d ? '<button type="button" class="fd-day" data-open="' + d.id + '" title="' + esc(d.fete) + '">Jour ' + d.id + '</button>' : '') + '</div>' +
+    '<div class="fd-media">' +
+      '<figure class="fd-frame" style="margin:0 auto;--ar:' + fdAr(im).toFixed(4) + '"><img src="' + esc(im.src) + '" alt="' + esc(title + (multi ? " — image " + (i + 1) + " sur " + n : "")) + '"></figure>' +
+      '<span class="fd-badge">' + fdKind(im.w, im.h) + " · " + im.w + "×" + im.h + (multi ? " · " + (i + 1) + "/" + n : "") + '</span>' +
+      (multi ? '<button type="button" class="fd-arrow prev" data-fd-step="-1" data-p="' + esc(p.id) + '" aria-label="Image précédente">‹</button>' +
+               '<button type="button" class="fd-arrow next" data-fd-step="1" data-p="' + esc(p.id) + '" aria-label="Image suivante">›</button>' : '') +
+    '</div>' +
+    (multi ? '<div class="fd-thumbs">' + p.images.map((t, k) =>
+      '<button type="button" data-fd-thumb="' + k + '" data-p="' + esc(p.id) + '" aria-current="' + (k === i) + '" aria-label="Voir l\'image ' + (k + 1) + '"><img src="' + esc(t.src) + '" alt=""></button>').join("") + '</div>' : '') +
+    '<div class="fd-cbody">' + (p.caption ? '<p>' + esc(p.caption) + '</p>' : '') +
+      '<div class="fd-cfoot"><button type="button" class="btn" data-fd-dl data-p="' + esc(p.id) + '">Télécharger</button>' +
+      '<button type="button" class="btn danger" data-fd-del data-p="' + esc(p.id) + '">Supprimer</button></div></div></article>';
+}
+function fdRerenderCard(id){
+  const p = feed.find(x => x.id === id), el = document.querySelector('[data-fd-post="' + id + '"]');
+  if (p && el) el.outerHTML = fdCardHtml(p);
+}
+function fdRenderPosts(){
+  const host = $("#fdPosts"); if (!host) return;
+  const terms = (filters.q || "").split(/\s+/).filter(Boolean);
+  const list = feed.filter(p => {
+    if (!terms.length) return true;
+    const hay = norm([p.title, p.caption, p.day && dayById(p.day) ? dayById(p.day).fete : ""].join(" "));
+    return terms.every(t => hay.includes(t));
+  });
+  if (!list.length){
+    host.innerHTML = '<div class="fd-empty">' + (feed.length
+      ? "Aucune publication ne correspond à ta recherche."
+      : "Aucun design publié pour l'instant.<br>Ajoute tes images ci-dessus ou charge l'exemple pour voir les cadres s'adapter.") + '</div>';
+    return;
+  }
+  host.innerHTML = '<div class="fd-feed">' + list.map(fdCardHtml).join("") + '</div>';
+}
+function renderFeed(){
+  $("#view").innerHTML =
+    '<div class="crumbs"><button data-home>Accueil</button><span>›</span><span>Designs du jour</span></div>' +
+    '<div class="fd-top"><h2>Designs du jour</h2><p>Publie tes rendus du jour : chaque cadre s\'adapte au format de l\'image (portrait, paysage ou carré), sans la déformer ni la rogner.</p></div>' +
+    '<section class="fd-composer" id="fdComposer" aria-label="Publier un design"></section><div id="fdPosts"></div>';
+  fdRenderComposer(); fdRenderPosts();
+}
+
+/* ---------- Publication ---------- */
+function fdPublish(){
+  if (fdBusy) return;
+  if (!fdStage.length){
+    fdMsg = {text:"Ajoute au moins une image pour publier.", err:true};
+    fdRenderComposer(); return;
+  }
+  fdBusy = true;
+  const btn = $("#fdPublish");
+  if (btn){ btn.classList.add("loading"); btn.textContent = "Publication…"; }
+  setTimeout(() => {
+    const day = parseInt(fdForm.day, 10);
+    feed.unshift({
+      id:Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      title:fdForm.title.trim(), caption:fdForm.caption.trim(), day:dayById(day) ? day : 0,
+      images:fdStage.slice(), at:Date.now()
+    });
+    if (!fdSave()){
+      feed.shift(); fdBusy = false;
+      fdMsg = {text:"Stockage du navigateur plein : retire des images ou supprime d'anciens designs.", err:true};
+      fdRenderComposer(); return;
+    }
+    if (btn){ btn.classList.remove("loading"); btn.classList.add("ok"); btn.textContent = "✓ Publié !"; }
+    toast("Design du jour publié");
+    fdSyncNav();
+    setTimeout(() => {
+      fdBusy = false; fdStage = []; fdForm = {title:"", caption:"", day:""}; fdMsg = {text:"", err:false};
+      fdRenderComposer(); fdRenderPosts();
+    }, 700);
+  }, 500);
+}
+
+/* ---------- Intégration : navigation + accueil ---------- */
+const fdNavBtn = document.createElement("button");
+fdNavBtn.type = "button"; fdNavBtn.id = "fdNav"; fdNavBtn.className = "fd-nav";
+fdNavBtn.innerHTML = '<span aria-hidden="true">🖼️</span> Designs du jour <span class="n" id="fdNavCount"></span>';
+$("#homeBtn").insertAdjacentElement("afterend", fdNavBtn);
+function fdSyncNav(){
+  fdNavBtn.setAttribute("aria-current", fdIsRoute() ? "page" : "false");
+  const c = $("#fdNavCount"); if (c) c.textContent = feed.length;
+}
+function fdTeaserHtml(){
+  return '<div class="fd-teaser"><div><b>🖼️ Designs du jour</b><span>' +
+    (feed.length ? feed.length + " publication" + (feed.length > 1 ? "s" : "") + " dans ton flux." : "Publie ton premier rendu et retrouve-le dans ton flux.") +
+    '</span></div><button type="button" class="btn primary" data-fd-go>Ouvrir les designs du jour →</button></div>';
+}
+/* Enveloppe de renderHome() : le code d'origine est conservé tel quel. */
+const fdBaseRenderHome = renderHome;
+renderHome = function(){
+  if (fdIsRoute()){ renderFeed(); return; }
+  fdBaseRenderHome();
+  const hero = $("#view .hero");
+  if (hero) hero.insertAdjacentHTML("afterend", fdTeaserHtml());
+};
+
+/* ---------- Événements ---------- */
+document.addEventListener("click", e => {
+  const t = e.target;
+  if (t.closest("#fdNav") || t.closest("[data-fd-go]")){ closeNav(); location.hash = "#/designs"; return; }
+  const rm = t.closest("[data-fd-rm]");
+  if (rm){ fdStage.splice(parseInt(rm.dataset.fdRm, 10), 1); fdMsg = {text:"", err:false}; fdRenderComposer(); return; }
+  if (t.closest("[data-fd-demo]")){ fdLoadDemo(); return; }
+  if (t.closest("[data-fd-clear]")){ fdStage = []; fdForm = {title:"", caption:"", day:""}; fdMsg = {text:"", err:false}; fdRenderComposer(); return; }
+  if (t.closest("#fdPublish")){ fdPublish(); return; }
+
+  const el = t.closest("[data-p]");
+  if (!el) return;
+  const id = el.dataset.p, p = feed.find(x => x.id === id);
+  if (!p) return;
+  if (el.hasAttribute("data-fd-step")){
+    const n = p.images.length, cur = Math.min(fdIdx[id] || 0, n - 1);
+    fdIdx[id] = (cur + parseInt(el.dataset.fdStep, 10) + n) % n; fdRerenderCard(id);
+  } else if (el.hasAttribute("data-fd-thumb")){
+    fdIdx[id] = parseInt(el.dataset.fdThumb, 10); fdRerenderCard(id);
+  } else if (el.hasAttribute("data-fd-dl")){
+    const i = Math.min(fdIdx[id] || 0, p.images.length - 1), a = document.createElement("a");
+    a.href = p.images[i].src; a.download = slug(p.title || "design") + "-" + (i + 1) + ".jpg";
+    document.body.appendChild(a); a.click(); a.remove();
+  } else if (el.hasAttribute("data-fd-del")){
+    if (confirm("Supprimer cette publication ?")){
+      feed = feed.filter(x => x.id !== id); delete fdIdx[id]; fdSave();
+      fdRenderPosts(); fdSyncNav(); toast("Publication supprimée");
+    }
+  }
+});
+document.addEventListener("input", e => {
+  if (e.target.id === "fdTitle") fdForm.title = e.target.value;
+  else if (e.target.id === "fdCaption"){ fdForm.caption = e.target.value; const c = $("#fdCount"); if (c) c.textContent = fdForm.caption.length + " / 280"; }
+});
+document.addEventListener("change", e => {
+  if (e.target.id === "fdDay") fdForm.day = e.target.value;
+  else if (e.target.id === "fdFile"){ fdAddFiles(e.target.files); e.target.value = ""; }
+});
+["dragenter", "dragover"].forEach(ev => document.addEventListener(ev, e => {
+  const z = e.target.closest && e.target.closest("#fdDrop");
+  if (z){ e.preventDefault(); z.classList.add("over"); }
+}));
+document.addEventListener("dragleave", e => {
+  const z = e.target.closest && e.target.closest("#fdDrop");
+  if (z) z.classList.remove("over");
+});
+document.addEventListener("drop", e => {
+  const z = e.target.closest && e.target.closest("#fdDrop");
+  if (!z) return;
+  e.preventDefault(); z.classList.remove("over");
+  fdAddFiles(e.dataTransfer && e.dataTransfer.files);
+});
+document.addEventListener("paste", e => {
+  if (!fdIsRoute() || !$("#fdDrop")) return;
+  const f = Array.from((e.clipboardData && e.clipboardData.files) || []).filter(x => /^image\//.test(x.type));
+  if (f.length){ e.preventDefault(); fdAddFiles(f); }
+});
+window.addEventListener("hashchange", fdSyncNav);
+fdSyncNav();
+/* >>> FIN DE LA SECTION « DESIGNS DU JOUR » — LOGIQUE <<< */
 
 /* ============================================================
    DÉMARRAGE
