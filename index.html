@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Challenge Figma 30 jours — Fêtes du monde</title>
+<style>
+:root{
+  --bg:#f4f5fa; --surface:#ffffff; --surface-2:#f0f1f8; --text:#1b1d2a; --muted:#6a6f85;
+  --border:#e4e6f0; --accent:#5b4bff; --accent-soft:#e9e6ff; --accent-text:#ffffff;
+  --todo:#b6bace; --doing:#f5a524; --done:#1fb878;
+  --shadow:0 1px 2px rgba(20,22,50,.05),0 8px 24px rgba(20,22,50,.07);
+  --shadow-sm:0 1px 2px rgba(20,22,50,.06);
+  --radius:16px; --sidebar-w:340px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f1017; --surface:#171925; --surface-2:#1f2231; --text:#eceefa; --muted:#9a9fb8;
+    --border:#2a2e42; --accent:#8b7dff; --accent-soft:#2a2650; --accent-text:#0f1017;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+
+/* Layout */
+.app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;height:100vh;height:100dvh}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0}
+.side-head{padding:20px 20px 14px;border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:12px;cursor:pointer;background:none;border:0;padding:0;text-align:left;width:100%}
+.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#5b4bff,#ff5fa2 60%,#ffb347);display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;flex:none}
+.brand h1{font-size:16px;line-height:1.2;margin:0}
+.brand small{color:var(--muted);font-size:12px}
+.search{position:relative;margin-top:16px}
+.search input{width:100%;padding:11px 12px 11px 38px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);outline:none}
+.search input:focus{border-color:var(--accent);background:var(--surface)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chip{border:1px solid var(--border);background:var(--surface);padding:5px 11px;border-radius:999px;font-size:12.5px;color:var(--muted);transition:.15s}
+.chip:hover{border-color:var(--accent);color:var(--text)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-text);font-weight:600}
+.status-row{display:flex;gap:6px;margin-top:10px;align-items:center}
+.status-row label{font-size:12px;color:var(--muted)}
+.status-row select{flex:1;padding:6px 8px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);font-size:13px}
+.list{overflow-y:auto;flex:1;padding:10px;min-height:0}
+.list .count{font-size:12px;color:var(--muted);padding:4px 10px 8px}
+.item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid transparent;background:none;padding:10px;border-radius:12px;transition:.12s}
+.item:hover{background:var(--surface-2)}
+.item.active{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.num{flex:none;width:34px;height:34px;border-radius:10px;background:var(--surface-2);display:grid;place-items:center;font-size:12.5px;font-weight:700;color:var(--muted)}
+.item.active .num{background:var(--accent);color:var(--accent-text)}
+.item .txt{min-width:0;flex:1}
+.item .t{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .s{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--todo)}
+.dot.doing{background:var(--doing)}
+.dot.done{background:var(--done);box-shadow:0 0 0 3px color-mix(in srgb,var(--done) 25%,transparent)}
+.empty{text-align:center;color:var(--muted);padding:40px 16px;font-size:14px}
+
+/* Main */
+.main{display:flex;flex-direction:column;min-width:0;min-height:0}
+.topbar{display:flex;align-items:center;gap:16px;padding:14px 28px;background:var(--surface);border-bottom:1px solid var(--border)}
+.menu-btn{display:none;border:1px solid var(--border);background:var(--surface-2);border-radius:10px;width:40px;height:40px;place-items:center;flex:none}
+.menu-btn svg{width:20px;height:20px}
+.prog{flex:1;min-width:0}
+.prog-top{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;margin-bottom:7px;flex-wrap:wrap}
+.prog-top strong{font-weight:700}
+.prog-top span{color:var(--muted)}
+.bar{height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden;display:flex}
+.bar i{display:block;height:100%;transition:width .4s ease}
+.bar .b-done{background:linear-gradient(90deg,#5b4bff,#1fb878)}
+.bar .b-doing{background:var(--doing);opacity:.85}
+.reset{border:1px solid var(--border);background:none;border-radius:10px;padding:8px 12px;font-size:12.5px;color:var(--muted);flex:none}
+.reset:hover{color:#d64545;border-color:#d64545}
+.content{overflow-y:auto;flex:1;padding:28px;min-height:0}
+.wrap{max-width:980px;margin:0 auto}
+
+/* Home */
+.hero{background:linear-gradient(135deg,#5b4bff 0%,#8a4bff 45%,#ff5fa2 100%);color:#fff;border-radius:24px;padding:32px;box-shadow:var(--shadow);margin-bottom:28px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.12)}
+.hero h2{margin:0 0 8px;font-size:28px;line-height:1.2;position:relative}
+.hero p{margin:0 0 20px;max-width:620px;opacity:.95;position:relative}
+.hero .cta{background:#fff;color:#4a3bd8;border:0;border-radius:12px;padding:11px 18px;font-weight:700;position:relative;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.weeks{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.week{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow-sm)}
+.week b{display:block;font-size:13px}
+.week span{font-size:12px;color:var(--muted)}
+.week .wb{height:6px;background:var(--surface-2);border-radius:99px;margin-top:10px;overflow:hidden}
+.week .wb i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0;text-align:left;box-shadow:var(--shadow-sm);overflow:hidden;transition:transform .15s,box-shadow .15s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.strip{height:8px;display:flex}
+.strip i{flex:1}
+.card-b{padding:16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card .top{display:flex;justify-content:space-between;align-items:center}
+.card .d{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
+.card h3{margin:0;font-size:16px;line-height:1.3}
+.card p{margin:0;font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:11.5px;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);margin-top:auto;align-self:flex-start}
+.card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+
+/* Detail */
+.crumbs{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:14px;flex-wrap:wrap}
+.crumbs button{background:none;border:0;padding:0;color:var(--accent);font-weight:600}
+.head{background:var(--surface);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px}
+.head .strip{height:10px}
+.head-b{padding:26px 28px}
+.eyebrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.pill{font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.pill.alt{background:var(--surface-2);color:var(--muted);font-weight:600}
+.head h2{margin:0;font-size:28px;line-height:1.2}
+.head .sub{margin:6px 0 0;font-size:16px;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:22px}
+.btn{border:1px solid var(--border);background:var(--surface);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;display:inline-flex;gap:8px;align-items:center;transition:.15s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+.btn.primary:hover{filter:brightness(1.08);color:var(--accent-text)}
+.btn svg{width:17px;height:17px}
+.check{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);font-weight:600;font-size:14px;cursor:pointer;user-select:none}
+.check input{width:20px;height:20px;accent-color:var(--done);cursor:pointer;margin:0}
+.check.on{background:color-mix(in srgb,var(--done) 14%,var(--surface));border-color:var(--done);color:var(--done)}
+.sel{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface);font-weight:600;font-size:14px}
+.sections{display:grid;gap:14px}
+.sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow-sm)}
+.sec h3{margin:0 0 8px;font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:8px}
+.sec h3 span.i{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:8px;background:var(--accent-soft);font-size:13px;letter-spacing:0}
+.sec p{margin:0;font-size:15.5px}
+.sw{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.sw button{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:4px 12px 4px 4px;font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.sw button:hover{border-color:var(--accent)}
+.sw i{width:26px;height:26px;border-radius:50%;border:1px solid rgba(128,128,128,.35);display:block}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);background:#1b1d2a;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 8px 30px rgba(0,0,0,.3);z-index:50}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.scrim{display:none}
+
+/* ---------- Design du Jour (publication) ---------- */
+.design{padding:0;overflow:hidden}
+.design .d-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 22px 0;flex-wrap:wrap}
+.design .d-head h3{margin:0}
+.d-intro{margin:8px 22px 0!important;font-size:14px!important;color:var(--muted)}
+.pub-badge{font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px;background:color-mix(in srgb,var(--done) 16%,var(--surface));color:var(--done)}
+.pub-badge.draft{background:var(--surface-2);color:var(--muted)}
+.d-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;padding:18px 22px 22px}
+.drop{position:relative;border:2px dashed var(--border);border-radius:14px;background:var(--surface-2);min-height:320px;height:100%;display:grid;place-items:center;text-align:center;overflow:hidden;transition:.15s;padding:18px}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop.has{border-style:solid;padding:0;background:var(--surface)}
+.drop input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.drop .ph{display:grid;gap:6px;justify-items:center;color:var(--muted);font-size:13px;pointer-events:none}
+.drop .ph svg{width:44px;height:44px;color:var(--accent);margin-bottom:4px}
+.drop .ph b{color:var(--text);font-size:15px}
+.drop .chg{position:absolute;left:10px;bottom:10px;background:rgba(15,16,23,.78);color:#fff;font-size:12.5px;padding:6px 12px;border-radius:999px;pointer-events:none}
+.drop .rm{position:absolute;right:10px;top:10px;z-index:2;width:32px;height:32px;border-radius:50%;border:0;background:rgba(15,16,23,.78);color:#fff;font-size:14px}
+.drop .rm:hover{background:#d64545}
+.fld{display:grid;gap:6px;margin-bottom:14px}
+.fld>label,.fld .lb{font-size:12.5px;font-weight:700;color:var(--muted)}
+.fld input[type=text],.fld textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);outline:none;resize:vertical}
+.fld input[type=text]:focus,.fld textarea:focus{border-color:var(--accent);background:var(--surface)}
+.fld .cnt{font-size:11.5px;color:var(--muted);text-align:right}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{border:1px solid var(--border);background:var(--surface);padding:5px 11px;border-radius:999px;font-size:12.5px;color:var(--muted);transition:.15s}
+.opt:hover{border-color:var(--accent);color:var(--text)}
+.opt[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-text);font-weight:600}
+.addrow{display:flex;gap:6px;margin-top:4px}
+.addrow input{flex:1;min-width:0}
+.addrow .btn{padding:8px 14px}
+.mark{display:flex;align-items:center;gap:8px;font-size:13.5px;cursor:pointer}
+.mark input{width:18px;height:18px;accent-color:var(--done);margin:0}
+.pub-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 22px;border-top:1px solid var(--border);background:var(--surface-2)}
+.btn-pub{border:1px solid var(--accent);background:var(--accent);color:var(--accent-text);padding:11px 20px;border-radius:12px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;gap:8px;transition:.15s;box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 35%,transparent)}
+.btn-pub:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.btn-pub:active{transform:translateY(0)}
+.btn-pub[aria-disabled="true"]{opacity:.5;cursor:not-allowed;box-shadow:none;transform:none;filter:none}
+.btn-pub.loading{pointer-events:none;opacity:.85}
+.btn-pub.loading:before{content:"";width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+.btn-pub.ok{background:var(--done);border-color:var(--done);color:#fff;box-shadow:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hint{font-size:13px;color:var(--muted)}
+.hint.err{color:#d64545;font-weight:600}
+.confirm{display:flex;gap:10px;align-items:center;background:color-mix(in srgb,var(--done) 14%,var(--surface));border:1px solid var(--done);padding:12px 14px;border-radius:12px;margin:16px 22px 0;font-size:14px}
+.pubcard{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px;padding:18px 22px 22px}
+.pubimg{border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface-2);align-self:start}
+.pubimg img{width:100%;display:block;max-height:520px;object-fit:contain}
+.pubcard h4{margin:0 0 6px;font-size:20px;line-height:1.25}
+.pubcard .pdesc{margin:0 0 14px;font-size:15px;color:var(--text);white-space:pre-wrap}
+.meta{margin-bottom:12px}
+.meta b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.meta .pill{margin:0 6px 6px 0;display:inline-block}
+.btn.danger:hover{border-color:#d64545;color:#d64545}
+.gal{margin-bottom:28px}
+.gal h3{margin:0 0 12px;font-size:16px}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.gt{border:1px solid var(--border);background:var(--surface);border-radius:14px;overflow:hidden;text-align:left;padding:0;box-shadow:var(--shadow-sm);transition:transform .15s,box-shadow .15s}
+.gt:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.gt img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.gt div{padding:8px 10px;font-size:12.5px;line-height:1.35}
+.gt div span{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:760px){
+  .d-body,.pubcard{grid-template-columns:1fr}
+  .drop{min-height:240px}
+  .pub-row .btn,.pub-row .btn-pub{flex:1 1 auto;justify-content:center}
+}
+
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;inset:0 auto 0 0;width:min(92vw,360px);z-index:30;transform:translateX(-102%);transition:transform .25s ease;box-shadow:var(--shadow)}
+  .nav-open .sidebar{transform:none}
+  .nav-open .scrim{display:block;position:fixed;inset:0;background:rgba(10,10,25,.5);z-index:20}
+  .menu-btn{display:grid}
+  .topbar{padding:12px 16px}
+  .content{padding:16px}
+  .weeks{grid-template-columns:repeat(2,1fr)}
+  .hero{padding:24px}
+  .hero h2,.head h2{font-size:23px}
+  .head-b{padding:20px}
+  .reset{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar" aria-label="Liste des 30 jours">
+    <div class="side-head">
+      <button class="brand" id="homeBtn" aria-label="Retour à l'accueil">
+        <div class="logo">F30</div>
+        <div><h1>Challenge Figma 30 jours</h1><small>Fêtes &amp; célébrations du monde</small></div>
+      </button>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Rechercher une fête, un livrable…" autocomplete="off" aria-label="Rechercher">
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Filtrer par catégorie"></div>
+      <div class="status-row">
+        <label for="statusFilter">Statut</label>
+        <select id="statusFilter">
+          <option value="all">Tous les statuts</option>
+          <option value="todo">À faire</option>
+          <option value="doing">En cours</option>
+          <option value="done">Terminé</option>
+        </select>
+      </div>
+    </div>
+    <nav class="list" id="list"></nav>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Ouvrir la liste des jours">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="prog" aria-live="polite">
+        <div class="prog-top"><strong id="progText"></strong><span id="progSub"></span></div>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="30" id="bar"><i class="b-done" id="bDone"></i><i class="b-doing" id="bDoing"></i></div>
+      </div>
+      <button class="reset" id="resetBtn">Réinitialiser</button>
+    </header>
+    <main class="content" id="content"><div class="wrap" id="view"></div></main>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ============================================================
+   DONNÉES — 30 briefs du challenge
+   ============================================================ */
+const CATS = [
+  {id:"all", label:"Toutes les fêtes"},
+  {id:"mobile", label:"UI Mobile"},
+  {id:"web", label:"Landing & Web"},
+  {id:"comp", label:"Composants & Systèmes"},
+  {id:"social", label:"Social & Print"},
+  {id:"dash", label:"Dashboards"},
+  {id:"proto", label:"Prototype & Animation"}
+];
+const CAT_LABEL = Object.fromEntries(CATS.map(c => [c.id, c.label]));
+
+const WEEKS = [
+  {n:1, label:"Semaine 1 · Fondations", range:[1,7]},
+  {n:2, label:"Semaine 2 · Composants", range:[8,14]},
+  {n:3, label:"Semaine 3 · Flux & systèmes", range:[15,22]},
+  {n:4, label:"Semaine 4 · Variables & finale", range:[23,30]}
+];
+
+const DAYS = [
+{id:1, fete:"Réveillon du Nouvel An", livrable:"Carte de vœux statique", cat:"social", week:1,
+ contexte:"Maison Aurélie, une marque de champagne artisanal, veut envoyer une carte de vœux numérique à ses 5 000 clients fidèles.",
+ objectif:"Transmettre l'élégance, la promesse d'un nouveau départ et le plaisir de trinquer, sans surcharge.",
+ livrables:"1 post Instagram 1080x1350 + 1 déclinaison carrée 1080x1080.",
+ contraintes:"Frames avec grille de colonnes, Styles de texte et de couleur créés dès le départ, Auto Layout pour le bloc de texte (titre, vœu, signature), alignement et espacement en multiples de 8.",
+ style:"Noir profond #0B0B10, or champagne #D9B96E, ivoire #F6F1E7. Titre en serif contrasté (type Playfair Display), texte en sans-serif fine. Ambiance luxe, paillettes minimales.",
+ colors:["#0B0B10","#D9B96E","#F6F1E7"]},
+{id:2, fete:"Saint-Valentin", livrable:"Pop-up de promotion", cat:"web", week:1,
+ contexte:"Fleur & Co, un fleuriste en ligne, veut une modale de promo à l'arrivée sur le site.",
+ objectif:"Capter l'attention en 3 secondes et pousser à l'inscription newsletter contre -15 %.",
+ livrables:"Modale desktop 560x640 sur fond de page 1440x900 floutée, + version mobile 342x560.",
+ contraintes:"Auto Layout vertical imbriqué, Constraints pour le bouton de fermeture, champ de saisie avec 3 états (défaut, focus, erreur) créé comme composant, Effect Background blur pour l'overlay.",
+ style:"Rose poudré #F7C6CE, rouge baiser #C8102E, blanc cassé. Sans-serif arrondie, illustration vectorielle simple de pivoines. Ton chaleureux et romantique, pas kitsch.",
+ colors:["#F7C6CE","#C8102E","#FFF8F5"]},
+{id:3, fete:"Fête de la Musique", livrable:"Affiche et Story", cat:"social", week:1,
+ contexte:"La mairie d'une ville moyenne organise sa soirée du 21 juin avec 12 scènes en plein air.",
+ objectif:"Créer une identité énergique, lisible de loin, qui donne envie de sortir.",
+ livrables:"Affiche 1080x1527 (A-ratio) + Story Instagram 1080x1920.",
+ contraintes:"Typographie comme élément graphique principal, masques et opérations booléennes pour des formes d'ondes sonores, Auto Layout pour le bloc horaires/lieux, Styles de couleur.",
+ style:"Palette vive : jaune électrique #FFE600, magenta #E5007D, bleu nuit #0A1034. Titre en sans-serif extra bold condensée. Ambiance festival, contrastes forts.",
+ colors:["#FFE600","#E5007D","#0A1034"]},
+{id:4, fete:"Nowruz (Nouvel An persan)", livrable:"Bannière hero web", cat:"web", week:1,
+ contexte:"Safran & Sofreh, une épicerie fine d'inspiration iranienne, lance sa collection du Nouvel An le 20 mars.",
+ objectif:"Évoquer le renouveau du printemps et la table Haft-sin, avec respect des symboles.",
+ livrables:"Bannière hero 1920x1080, + version tablette 1024x768 et mobile 390x844.",
+ contraintes:"Constraints (gauche/droite/centre) pour que le contenu s'adapte au redimensionnement, Auto Layout pour le groupe titre + CTA, images en Fill avec masque, grille 12 colonnes desktop.",
+ style:"Vert tendre #7BA05B, turquoise #1FA7A0, rouge grenade #9E1B32, crème. Sans-serif humaniste avec accent calligraphique léger. Ambiance lumineuse, fraîche, aérée.",
+ colors:["#7BA05B","#1FA7A0","#9E1B32","#FFF4DF"]},
+{id:5, fete:"Pâques", livrable:"Carte produit e-commerce", cat:"comp", week:1,
+ contexte:"Chocolaterie Dumont vend des œufs et des poules en chocolat en ligne.",
+ objectif:"Rendre un produit saisonnier désirable et faciliter l'ajout au panier.",
+ livrables:"Une carte produit (320 de large) + une grille de 6 cartes en desktop 1440 et mobile 390.",
+ contraintes:"Premier composant maître propre, Auto Layout avec Hug/Fill, badge « Édition limitée » en composant imbriqué, Constraints pour le cœur « favori ».",
+ style:"Pastels : lavande #CDB4DB, jaune beurre #FFE8A3, menthe #B8E0D2, touche de chocolat #3B2418. Typographie ronde et amicale. Ambiance gourmande et joyeuse.",
+ colors:["#CDB4DB","#FFE8A3","#B8E0D2","#3B2418"]},
+{id:6, fete:"Fête des Mères", livrable:"Newsletter email", cat:"web", week:1,
+ contexte:"Une marque de bijoux éthiques, Lune & Lin, envoie sa campagne principale de l'année.",
+ objectif:"Donner envie d'offrir, avec une hiérarchie claire : message, produits, délai de livraison.",
+ livrables:"Email 600 de large, hauteur libre (environ 1800), + version mobile 375.",
+ contraintes:"Auto Layout vertical pour toute la structure, sections en composants réutilisables (header, bloc produit x3, footer), Fill container pour l'adaptation mobile.",
+ style:"Beige sable #EDE0D4, terracotta #B5651D, vert sauge #8A9A5B. Serif douce pour les titres, sans-serif lisible (16 px minimum) pour le corps. Ambiance tendre, authentique.",
+ colors:["#EDE0D4","#B5651D","#8A9A5B"]},
+{id:7, fete:"Holi", livrable:"Onboarding mobile (3 écrans)", cat:"mobile", week:1,
+ contexte:"ColorRun, une application de course solidaire, organise une édition Holi pour 10 000 participants.",
+ objectif:"Faire comprendre en 3 écrans : s'inscrire, choisir son créneau, rejoindre son équipe, dans une explosion de couleurs maîtrisée.",
+ livrables:"3 écrans mobiles 390x844 + 1 prototype de navigation.",
+ contraintes:"Auto Layout complet, indicateur de pagination en composant, prototypage simple (On click / swipe, Move in), zones sûres iOS respectées (barre de statut et indicateur d'accueil).",
+ style:"Fond blanc, accents poudrés : fuchsia #FF2E93, orange #FF8A00, turquoise #00C2C7, violet #6A3FD6. Sans-serif géométrique. Ambiance joyeuse mais lisible : les couleurs servent à guider, pas à noyer.",
+ colors:["#FF2E93","#FF8A00","#00C2C7","#6A3FD6"]},
+
+{id:8, fete:"Hanami (floraison des cerisiers)", livrable:"App de réservation", cat:"mobile", week:2,
+ contexte:"Sakura Spots, une application qui permet de réserver des pique-niques sous les cerisiers de 3 parcs au Japon.",
+ objectif:"Rendre la réservation en 3 taps, tout en créant une atmosphère sereine.",
+ livrables:"4 écrans mobiles 390x844 : liste des parcs, détail d'un spot, choix de créneau, confirmation.",
+ contraintes:"Composant « carte parc » avec Variants (par défaut, sélectionné, complet), Component Properties (booléen pour l'icône « favori », texte pour le prix), prototype de bout en bout avec Move in / Slide in.",
+ style:"Rose cerisier #F4B6C2, vert mousse #6B8E5A, gris encre #2B2B2B, fond blanc cassé. Sans-serif sobre, grands espaces blancs inspirés du minimalisme japonais.",
+ colors:["#F4B6C2","#6B8E5A","#2B2B2B","#FAF7F2"]},
+{id:9, fete:"Eid al-Fitr", livrable:"Cartes de vœux interactives", cat:"proto", week:2,
+ contexte:"Une banque en ligne souhaite offrir à ses clients une carte de vœux numérique personnalisable pour l'Aïd.",
+ objectif:"Créer un moment de partage chaleureux : choisir un modèle, écrire un message, envoyer.",
+ livrables:"3 modèles de carte 1080x1350 + un écran de sélection mobile 390x844 + un prototype tap/flip.",
+ contraintes:"Prototype avec interaction « On click » vers un état retourné (recto/verso), Smart Animate sur les éléments décoratifs (lanterne qui oscille), Variants pour 3 thèmes de couleur d'un même modèle.",
+ style:"Vert émeraude #0F6B4B, or #C9A227, ivoire. Motifs géométriques inspirés de l'art islamique, évite toute représentation figurative. Calligraphie de style Kufi ou naskh pour le titre « Eid Mubarak ».",
+ colors:["#0F6B4B","#C9A227","#FBF6E9"]},
+{id:10, fete:"Solstice d'été", livrable:"Landing page événementielle", cat:"web", week:2,
+ contexte:"Un festival nordique de musique et de lumière, Midnattssol, célèbre le jour le plus long de l'année en Suède.",
+ objectif:"Convertir les visiteurs en acheteurs de billets, en transmettant la magie des nuits claires.",
+ livrables:"Landing page desktop 1440 (5 sections : hero, programme, line-up, infos pratiques, billetterie), + tablette 768 et mobile 390.",
+ contraintes:"Auto Layout imbriqué sur toutes les sections, Constraints et Fill container pour les 3 breakpoints, composants « bouton » et « carte artiste » avec Variants, ancrage de navigation prototypé (scroll to).",
+ style:"Dégradé crépuscule : bleu pervenche #6C8EBF vers rose doré #F2B5A0, accents jaune soleil #FFD166. Typographie light très aérée. Ambiance onirique et apaisante.",
+ colors:["#6C8EBF","#F2B5A0","#FFD166"]},
+{id:11, fete:"Carnaval de Rio", livrable:"Composant de billetterie", cat:"comp", week:2,
+ contexte:"Une agence de voyages vend des places en tribune pour le Sambadrome.",
+ objectif:"Permettre de choisir facilement un secteur, un jour et une quantité, avec lecture immédiate des disponibilités.",
+ livrables:"Un Component Set « Ticket Card » (au moins 12 variantes) + 1 écran mobile 390x844 qui l'utilise.",
+ contraintes:"Variants à 3 propriétés (type : Tribune / Frisa / Camarote ; état : par défaut / sélectionné / épuisé ; taille : compact / étendu), Component Properties, Auto Layout avec Hug, documentation du composant dans une frame dédiée.",
+ style:"Vert #009C3B, jaune #FFDF00, bleu #002776, fond sombre pour faire ressortir les couleurs. Typographie impactante, rythmes de rectangles inspirés des costumes de plumes.",
+ colors:["#009C3B","#FFDF00","#002776"]},
+{id:12, fete:"Oktoberfest", livrable:"Menu digital mobile", cat:"mobile", week:2,
+ contexte:"Une brasserie bavaroise installe un restaurant éphémère à Paris pendant 3 semaines.",
+ objectif:"Permettre de consulter la carte, filtrer, et composer sa commande sur son téléphone depuis la table.",
+ livrables:"5 écrans mobiles 390x844 : accueil, catégories, détail d'un plat, panier, confirmation.",
+ contraintes:"Onglets (tabs) en composant avec Variants, panier en Overlay (Open overlay / Close overlay), liste de plats en Auto Layout répétée avec Properties pour l'allergène (booléen), prototype avec transitions Dissolve et Smart Animate.",
+ style:"Bleu et blanc bavarois en losanges #0066B3 et #FFFFFF, bois chaud #8B5A2B, ambre #E0A526. Sans-serif lisible (taille 16 minimum), accents en slab serif. Ambiance conviviale, chaleureuse.",
+ colors:["#0066B3","#FFFFFF","#8B5A2B","#E0A526"]},
+{id:13, fete:"Halloween", livrable:"Pop-up de sortie animée", cat:"proto", week:2,
+ contexte:"Un site de jeux de société veut récupérer les visiteurs qui s'apprêtent à quitter la page avant le 31 octobre.",
+ objectif:"Provoquer un sourire et une action : une citrouille qui réagit et un code promo à révéler.",
+ livrables:"Modale desktop 640x480 avec 3 états prototypés : apparition, hover, révélation du code.",
+ contraintes:"Smart Animate sur la citrouille (yeux qui s'allument, bouche qui s'ouvre), Variants pour les états, interactions « While hovering » et « After delay », courbes d'accélération personnalisées (Ease-in-out, Spring).",
+ style:"Noir #0D0D0D, orange #FF6A00, violet #5B2A86, vert acide en accent. Typographie ludique mais lisible. Ambiance « mignon-espiègle », pas horreur.",
+ colors:["#0D0D0D","#FF6A00","#5B2A86","#9BE22E"]},
+{id:14, fete:"Día de Muertos", livrable:"Carrousel Instagram et Story", cat:"social", week:2,
+ contexte:"Un musée d'art mexicain propose un parcours éducatif en ligne sur la tradition des ofrendas.",
+ objectif:"Raconter le sens de la fête en 5 cartes, avec respect, clarté et émotion.",
+ livrables:"Carrousel de 5 slides 1080x1350 + 1 Story 1080x1920 d'annonce.",
+ contraintes:"Composants de mise en page (titre, texte, numéro de slide) avec Variants, grille commune pour assurer la continuité entre slides, Auto Layout pour les blocs de texte, export en 2x.",
+ style:"Orange cempasúchil #FF8C1A, magenta #D6336C, violet profond #3A1C71, turquoise en accent. Motifs de papel picado en vectoriel. Évite les caricatures de crânes : privilégie une approche respectueuse et solennelle.",
+ colors:["#FF8C1A","#D6336C","#3A1C71","#2EC4B6"]},
+
+{id:15, fete:"Diwali", livrable:"Flux de checkout de cadeaux", cat:"mobile", week:3,
+ contexte:"Mithai Box, une boutique en ligne de confiseries indiennes, prépare son pic de ventes avant la fête des lumières.",
+ objectif:"Réduire l'abandon de panier : un parcours clair en 4 étapes, avec option de message cadeau et livraison à plusieurs adresses.",
+ livrables:"6 écrans mobiles 390x844 : panier, livraison, message cadeau, paiement, confirmation, suivi.",
+ contraintes:"Composants de formulaire (champ, sélecteur, case à cocher) avec Variants d'état (défaut, focus, erreur, désactivé), indicateur d'étapes en composant, prototype complet avec gestion des erreurs affichées via Variants.",
+ style:"Violet profond #4A1259, orange safran #FF9933, or #E8B923, magenta en accent. Sans-serif claire, motifs rangoli discrets en arrière-plan. Ambiance festive mais sans compromis sur la lisibilité des formulaires.",
+ colors:["#4A1259","#FF9933","#E8B923","#D6336C"]},
+{id:16, fete:"Thanksgiving", livrable:"Dashboard d'organisation du repas", cat:"dash", week:3,
+ contexte:"Table Ronde, une application qui aide les familles à coordonner qui apporte quoi, les horaires et les invités.",
+ objectif:"Donner à l'organisateur une vue d'ensemble en un coup d'œil : plats assignés, convives confirmés, tâches restantes.",
+ livrables:"1 dashboard desktop 1440x1024 + 1 version tablette 1024x768.",
+ contraintes:"Auto Layout imbriqué sur 3 niveaux minimum, cartes de statistiques en composants avec Properties, tableau en Auto Layout avec lignes répétées, statuts en Variants (confirmé, en attente, annulé).",
+ style:"Brun chaud #6B3E26, orange automne #D97A2B, vert olive #6B7A3A, fond crème. Sans-serif de type interface (Inter ou équivalent). Priorité absolue à la lisibilité des données.",
+ colors:["#6B3E26","#D97A2B","#6B7A3A","#FFF4E0"]},
+{id:17, fete:"Black Friday", livrable:"Landing page et compte à rebours", cat:"web", week:3,
+ contexte:"Une marque de sneakers lance 72 heures de promotions avec des remises par paliers.",
+ objectif:"Créer de l'urgence sans agresser : lisibilité des offres, hiérarchie des remises, compte à rebours clair.",
+ livrables:"Landing page desktop 1440 + mobile 390, avec un composant « Countdown » (jours, heures, minutes, secondes).",
+ contraintes:"Component Set « Countdown » avec Variants, badges de remise (-20 %, -40 %, -60 %) en composants, grille produits en Auto Layout, bandeau sticky prototypé (Fixed position au scroll).",
+ style:"Noir #0A0A0A, jaune électrique #F5FF3B, blanc pur, rouge en accent unique pour l'urgence. Sans-serif condensée et massive. Ambiance brutaliste, contrastes extrêmes.",
+ colors:["#0A0A0A","#F5FF3B","#FFFFFF","#E5173F"]},
+{id:18, fete:"Hanoukka", livrable:"Application des 8 nuits", cat:"mobile", week:3,
+ contexte:"Une app communautaire propose un rituel quotidien pendant les 8 nuits : bougie à allumer, bénédiction, recette et activité en famille.",
+ objectif:"Créer un rituel quotidien simple, chaleureux et accessible à tous les âges.",
+ livrables:"5 écrans mobiles 390x844 : accueil avec les 8 bougies, détail du jour, recette, activité, calendrier.",
+ contraintes:"Composant « Hanoukkia » avec 8 variants (nombre de bougies allumées), prototype avec Smart Animate pour l'allumage, navigation par onglets, états verrouillé/déverrouillé par jour.",
+ style:"Bleu nuit #0B1F4B, bleu azur #2E6FDB, argent #C9D1E0, or de flamme #FFC857. Typographie douce, formes arrondies. Ambiance paisible et lumineuse.",
+ colors:["#0B1F4B","#2E6FDB","#C9D1E0","#FFC857"]},
+{id:19, fete:"Noël", livrable:"Calendrier de l'Avent interactif", cat:"proto", week:3,
+ contexte:"Une librairie indépendante offre chaque jour, du 1er au 24 décembre, une recommandation de lecture, une citation ou une réduction.",
+ objectif:"Créer l'envie de revenir chaque jour, avec un effet de surprise à l'ouverture de chaque case.",
+ livrables:"1 écran mobile 390x844 avec 24 cases + 1 écran de détail + prototype d'ouverture.",
+ contraintes:"Grille en Auto Layout (wrap activé), composant « Case » avec Variants (fermée, ouverte, verrouillée, aujourd'hui), prototype avec Smart Animate (porte qui s'ouvre), au moins 5 cases prototypées de bout en bout.",
+ style:"Vert sapin #14452F, rouge baie #B3202A, or #D4AF37, crème. Serif chaleureuse, illustrations vectorielles de papier découpé. Ambiance cosy, livres et chocolat chaud.",
+ colors:["#14452F","#B3202A","#D4AF37","#FFF5DC"]},
+{id:20, fete:"Fête des Lumières de Lyon", livrable:"Mini design system", cat:"comp", week:3,
+ contexte:"L'office de tourisme de Lyon veut une base d'interface cohérente pour les écrans web, mobile et bornes de l'événement du 8 décembre.",
+ objectif:"Poser les fondations d'un système réutilisable et documenté par une équipe de 5 designers.",
+ livrables:"1 page de documentation (couleurs, typographie, espacements, ombres), 8 composants (bouton, champ, carte, badge, onglet, alerte, avatar, menu), 1 écran d'exemple.",
+ contraintes:"Styles de couleur et de texte, Effect styles, Component Sets avec Variants et Properties, conventions de nommage (Category/Name/State), page de documentation avec règles d'usage (à faire / à ne pas faire).",
+ style:"Bleu nuit #0E1A3A, ambre lumineux #FFB347, magenta #D6336C, cyan #35D0E0. Sans-serif géométrique moderne. Effets de lueur utilisés avec parcimonie.",
+ colors:["#0E1A3A","#FFB347","#D6336C","#35D0E0"]},
+{id:21, fete:"Kwanzaa", livrable:"Dashboard d'une ONG de collecte", cat:"dash", week:3,
+ contexte:"Une association finance des bourses scolaires pendant les 7 jours de Kwanzaa, chaque jour étant associé à un principe (Umoja, Kujichagulia, etc.).",
+ objectif:"Visualiser les dons, les donateurs et la progression de l'objectif, avec un rappel du principe du jour.",
+ livrables:"Dashboard desktop 1440x1024 + écran mobile 390x844 de suivi de campagne.",
+ contraintes:"Auto Layout adaptatif, graphiques conçus en vectoriel (barres et courbes) mais cohérents avec le style, composants de carte de KPI, Component Properties pour l'état (en hausse, stable, en baisse).",
+ style:"Rouge #BB0000, noir #111111, vert #006B3C, accent or. Sans-serif ouverte. Ambiance fière, sobre et communautaire.",
+ colors:["#BB0000","#111111","#006B3C","#D4AF37"]},
+{id:22, fete:"Sainte-Lucie", livrable:"Interface responsive multi-appareils", cat:"web", week:3,
+ contexte:"Une entreprise de décoration lumineuse suédoise veut un espace client disponible sur téléphone, tablette et ordinateur pour la saison des fêtes.",
+ objectif:"Prouver que la même interface s'adapte avec fluidité à trois tailles d'écran sans perte d'information.",
+ livrables:"1 écran « Mes commandes » décliné en mobile 390, tablette 834 et desktop 1440.",
+ contraintes:"Constraints avancées, Auto Layout avec Min/Max width, composants adaptatifs (barre latérale devenant barre d'onglets), prototype montrant le redimensionnement entre les 3 frames.",
+ style:"Blanc glacé #F4F8FB, bleu nordique #2F5D8C, bougie #FFD27F. Sans-serif nette et chaleureuse. Ambiance scandinave : minimaliste et lumineuse.",
+ colors:["#F4F8FB","#2F5D8C","#FFD27F"]},
+
+{id:23, fete:"Épiphanie (Galette des Rois)", livrable:"Commande avec Variables", cat:"mobile", week:4,
+ contexte:"Boulangerie Maison Lefèvre ouvre la précommande de galettes pour 4, 6 ou 8 personnes, avec option fève personnalisée.",
+ objectif:"Permettre de composer sa commande avec un total qui se met à jour en direct.",
+ livrables:"4 écrans mobiles 390x844 : choix de taille, garniture, options, récapitulatif.",
+ contraintes:"Variables de type nombre (quantité) et chaîne (taille choisie), prix calculé via une logique d'interaction (Set variable), affichage conditionnel de l'option « fève personnalisée », Variants pour les sélecteurs.",
+ style:"Doré #E3B04B, brun croustillant #8A5A2B, crème #FFF5DC, rouge couronne en accent. Serif chaleureuse et sans-serif lisible. Ambiance artisanale et gourmande.",
+ colors:["#E3B04B","#8A5A2B","#FFF5DC","#B3202A"]},
+{id:24, fete:"Nouvel An lunaire", livrable:"Enveloppes rouges interactives", cat:"proto", week:4,
+ contexte:"Une application de paiement mobile lance une fonction d'enveloppes rouges numériques entre proches.",
+ objectif:"Rendre l'envoi et la réception ludiques, avec une surprise à l'ouverture et une gestion claire des montants.",
+ livrables:"5 écrans mobiles 390x844 : choisir le destinataire, le montant, l'enveloppe, le message, l'ouverture.",
+ contraintes:"Variables (montant, nom du destinataire, enveloppe sélectionnée), logique conditionnelle (If / Else) pour valider un montant minimum, Smart Animate pour l'ouverture de l'enveloppe, états d'erreur prototypés.",
+ style:"Rouge vif #D8232A, or #F2C14E, rouge profond #8A1118, crème. Typographie moderne avec touche calligraphique. Ambiance festive et chaleureuse, à base de motifs de nuages.",
+ colors:["#D8232A","#F2C14E","#8A1118","#FFF3DD"]},
+{id:25, fete:"Songkran", livrable:"Micro-interactions animées", cat:"proto", week:4,
+ contexte:"Une application de voyage en Thaïlande veut des composants vivants pour accompagner la fête de l'eau à Chiang Mai.",
+ objectif:"Montrer que chaque interaction peut être un petit moment de plaisir sans nuire à l'ergonomie.",
+ livrables:"6 composants animés : bouton, interrupteur, case à cocher, indicateur de chargement, notification, jauge de progression.",
+ contraintes:"Smart Animate avec courbes personnalisées, Variants pour chaque état, interactions « While hovering », « While pressing » et « After delay », durée maximale de 400 ms par transition.",
+ style:"Bleu aqua #27B5E8, turquoise #2EDFC4, jaune soleil #FFD23F, blanc. Sans-serif arrondie. Ambiance fraîche et ludique, vagues et gouttes stylisées.",
+ colors:["#27B5E8","#2EDFC4","#FFD23F","#FFFFFF"]},
+{id:26, fete:"Fête des Pères", livrable:"Configurateur de coffret cadeau", cat:"proto", week:4,
+ contexte:"Une marque de cadeaux premium propose des coffrets personnalisables : rasage, apéro ou outils.",
+ objectif:"Guider vers un coffret composé avec un prix dynamique et un aperçu visuel en direct.",
+ livrables:"1 écran de configuration desktop 1440x900 + version mobile 390x844 avec prototype fonctionnel.",
+ contraintes:"Variables booléennes et numériques pour chaque produit ajouté, affichage conditionnel de l'aperçu et du total, limite de 4 produits maximum gérée en logique, composants avec Properties.",
+ style:"Bleu marine #1C2B4A, cuivre #B87333, gris pierre #D9D5CF. Sans-serif géométrique et mono pour les prix. Ambiance masculine, sobre et soignée, sans clichés.",
+ colors:["#1C2B4A","#B87333","#D9D5CF"]},
+{id:27, fete:"Fête de la Lune (Mi-automne)", livrable:"Design system multi-thèmes", cat:"comp", week:4,
+ contexte:"Un réseau de pâtisseries chinoises veut une interface unique, déclinée en mode clair, sombre et édition spéciale « Nuit de lune ».",
+ objectif:"Prouver qu'un système bien construit permet de changer d'identité par simple changement de mode.",
+ livrables:"Collections de Variables (couleurs, espacements, rayons), 10 composants et 3 écrans d'exemple affichés dans les 3 modes.",
+ contraintes:"Variables en 2 niveaux (primitives puis sémantiques), 3 modes (Clair, Sombre, Nuit de lune), composants entièrement liés aux variables, page de documentation avec comparaison des modes.",
+ style:"Mode clair : blanc cassé, rouge laqué #B3262E. Mode sombre : anthracite #16161A, or doux. Mode lune : bleu nuit #0B1B3F, argent #DDE3F0, jaune lune #F5D76E. Sans-serif nette. Ambiance poétique.",
+ colors:["#B3262E","#16161A","#0B1B3F","#F5D76E"]},
+{id:28, fete:"Saint-Patrick", livrable:"Mini-jeu quiz prototypé", cat:"proto", week:4,
+ contexte:"Un pub irlandais lance un quiz sur son application pour animer la soirée du 17 mars.",
+ objectif:"Rendre un quiz de 5 questions ludique avec score, feedback immédiat et écran de résultat personnalisé.",
+ livrables:"8 écrans mobiles 390x844 : accueil, 5 questions, résultat gagnant, résultat perdant.",
+ contraintes:"Variable de score incrémentée à chaque bonne réponse (Set variable), conditions If / Else pour afficher le bon écran de résultat, états de réponse en Variants (neutre, juste, faux), Smart Animate sur les transitions.",
+ style:"Vert émeraude #0F8A4B, or #E4B93C, crème, noir en contraste. Typographie arrondie un peu gaélique pour les titres seulement. Ambiance joyeuse et chaleureuse.",
+ colors:["#0F8A4B","#E4B93C","#FFF5DC","#111111"]},
+{id:29, fete:"Festival de musique", livrable:"App complète en modes clair et sombre", cat:"dash", week:4,
+ contexte:"Un festival de 3 jours et 40 000 spectateurs veut une application pour le public et un tableau de bord pour l'équipe d'organisation.",
+ objectif:"Orienter le public (programme, plan, favoris) et donner à l'équipe une vue en temps réel sur la fréquentation et les incidents.",
+ livrables:"6 écrans mobiles 390x844 (côté public) + 1 dashboard desktop 1440x1024 (côté organisation), chacun en mode clair et sombre.",
+ contraintes:"Variables de couleur avec 2 modes basculables au prototype, composants issus des Jours 11 et 20 réutilisés ou améliorés, Auto Layout partout, états vides et états d'erreur obligatoires.",
+ style:"Palette libre mais cohérente, ancrée dans une idée forte de direction artistique. Contraste AA minimum en mode clair comme en sombre. Typographie à ton choix, 2 familles maximum.",
+ colors:["#6C5CE7","#101018","#FFFFFF"]},
+{id:30, fete:"Finale — Calendrier mondial des fêtes", livrable:"Étude de cas complète", cat:"mobile", week:4,
+ contexte:"Une start-up veut lancer « Festa », une application qui recense les fêtes du monde, avec rappels, recettes, traditions et événements près de chez soi.",
+ objectif:"Concevoir le produit complet et présenter ta démarche : c'est ton projet de clôture et ta pièce de portfolio.",
+ livrables:"Une étude de cas Figma : logo et identité, 8 écrans mobiles clés, 1 écran tablette, 1 prototype de bout en bout (onboarding, découverte, fiche d'une fête, ajout aux favoris), page de présentation du processus.",
+ contraintes:"Utilise tout ce que tu as appris : Variables et modes, composants avec Variants, Auto Layout, Constraints, Smart Animate, logique conditionnelle. Organise le fichier en pages claires (Cover, Design System, Écrans, Prototype).",
+ style:"Libre : invente ton identité en t'inspirant d'une ou deux fêtes de ce challenge. Cohérence et accessibilité priment sur la décoration.",
+ colors:["#FF6B6B","#4D96FF","#FFD93D"]}
+];
+
+/* ============================================================
+   ÉTAT & PERSISTENCE
+   ============================================================ */
+const STORE_KEY = "figma30.progress.v1";
+const STATUS = {todo:"À faire", doing:"En cours", done:"Terminé"};
+const TOTAL = DAYS.length;
+let progress = {};
+try { progress = JSON.parse(localStorage.getItem(STORE_KEY) || "{}") || {}; } catch (e) { progress = {}; }
+const filters = {cat:"all", status:"all", q:""};
+
+function saveProgress(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(progress)); } catch (e) {} }
+function getStatus(id){ return progress[id] || "todo"; }
+function setStatus(id, s){
+  if (s === "todo") delete progress[id]; else progress[id] = s;
+  saveProgress();
+  refresh();
+}
+function counts(){
+  let done = 0, doing = 0;
+  for (const d of DAYS){ const s = getStatus(d.id); if (s === "done") done++; else if (s === "doing") doing++; }
+  return {done, doing};
+}
+
+/* ============================================================
+   UTILITAIRES
+   ============================================================ */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const pad = n => String(n).padStart(2, "0");
+const dayById = id => DAYS.find(d => d.id === id);
+
+function matches(d){
+  if (filters.cat !== "all" && d.cat !== filters.cat) return false;
+  if (filters.status !== "all" && getStatus(d.id) !== filters.status) return false;
+  if (filters.q){
+    const hay = norm([d.id, "jour " + d.id, d.fete, d.livrable, CAT_LABEL[d.cat], d.contexte, d.objectif, d.livrables, d.contraintes, d.style].join(" "));
+    return filters.q.split(/\s+/).every(t => hay.includes(t));
+  }
+  return true;
+}
+function strip(colors){ return '<div class="strip">' + (colors || []).map(c => '<i style="background:' + esc(c) + '"></i>').join("") + '</div>'; }
+
+let toastTimer;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+function copyText(text, okMsg){
+  const fallback = () => {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    ta.remove();
+    toast(ok ? okMsg : "Copie impossible : sélectionne le texte manuellement.");
+  };
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(() => toast(okMsg), fallback);
+  } else fallback();
+}
+function briefText(d){
+  return "Jour " + d.id + " : " + d.fete + " — " + d.livrable + "\n\n" +
+    "Contexte & Client : " + d.contexte + "\n\n" +
+    "Objectif du design : " + d.objectif + "\n\n" +
+    "Livrables attendus : " + d.livrables + "\n\n" +
+    "Contraintes techniques & Figma : " + d.contraintes + "\n\n" +
+    "Consignes de style : " + d.style;
+}
+
+/* ============================================================
+   RENDU
+   ============================================================ */
+function renderChips(){
+  $("#chips").innerHTML = CATS.map(c =>
+    '<button class="chip" data-cat="' + c.id + '" aria-pressed="' + (filters.cat === c.id) + '">' + esc(c.label) + '</button>').join("");
+}
+
+function renderList(){
+  const list = DAYS.filter(matches);
+  const cur = currentId();
+  let html = '<div class="count">' + list.length + " jour" + (list.length > 1 ? "s" : "") + " affiché" + (list.length > 1 ? "s" : "") + "</div>";
+  if (!list.length){
+    html += '<div class="empty">Aucun jour ne correspond à ta recherche.<br><br><button class="btn" data-clear>Effacer les filtres</button></div>';
+  } else {
+    html += list.map(d => {
+      const s = getStatus(d.id);
+      return '<button class="item' + (d.id === cur ? " active" : "") + '" data-open="' + d.id + '">' +
+        '<span class="num">' + pad(d.id) + '</span>' +
+        '<span class="txt"><div class="t">' + esc(d.fete) + '</div><div class="s">' + esc(d.livrable) + '</div></span>' +
+        '<span class="dot ' + s + '" title="' + STATUS[s] + '" aria-label="' + STATUS[s] + '"></span></button>';
+    }).join("");
+  }
+  $("#list").innerHTML = html;
+}
+
+function renderProgress(){
+  const {done, doing} = counts();
+  const pct = Math.round(done / TOTAL * 100);
+  $("#progText").textContent = done + "/" + TOTAL + " jours complétés - " + pct + "%";
+  $("#progSub").textContent = doing ? doing + " en cours" : (done === TOTAL ? "Challenge terminé, bravo !" : "Prêt à démarrer ?");
+  $("#bDone").style.width = (done / TOTAL * 100) + "%";
+  $("#bDoing").style.width = (doing / TOTAL * 100) + "%";
+  const bar = $("#bar");
+  bar.setAttribute("aria-valuenow", done);
+  bar.setAttribute("aria-label", pct + " % du challenge complété");
+}
+
+function currentId(){
+  const m = location.hash.match(/^#\/jour\/(\d+)$/);
+  const id = m ? parseInt(m[1], 10) : 0;
+  return dayById(id) ? id : 0;
+}
+
+function renderHome(){
+  const {done, doing} = counts();
+  const next = DAYS.find(d => getStatus(d.id) !== "done");
+  const list = DAYS.filter(matches);
+  const weeks = WEEKS.map(w => {
+    const ds = DAYS.filter(d => d.id >= w.range[0] && d.id <= w.range[1]);
+    const dn = ds.filter(d => getStatus(d.id) === "done").length;
+    return '<div class="week"><b>' + esc(w.label) + '</b><span>Jours ' + w.range[0] + " à " + w.range[1] + " · " + dn + "/" + ds.length +
+      '</span><div class="wb"><i style="width:' + (dn / ds.length * 100) + '%"></i></div></div>';
+  }).join("");
+  const cards = list.map(d => {
+    const s = getStatus(d.id);
+    return '<button class="card" data-open="' + d.id + '">' + strip(d.colors) +
+      '<div class="card-b"><div class="top"><span class="d">Jour ' + d.id + '</span><span class="badge"><span class="dot ' + s + '"></span>' + STATUS[s] + '</span></div>' +
+      '<h3>' + esc(d.fete) + '</h3><p>' + esc(d.livrable) + '</p>' +
+      '<div class="foot"><span class="tag">' + esc(CAT_LABEL[d.cat]) + '</span></div></div></button>';
+  }).join("");
+  $("#view").innerHTML =
+    '<section class="hero"><h2>30 jours, 30 fêtes, 30 briefs clients</h2>' +
+    '<p>Un programme de design d\'interfaces et de création graphique dans Figma, des bases d\'Auto Layout jusqu\'aux Variables et aux prototypes avancés. ' +
+    (done ? "Tu as déjà terminé " + done + " jour" + (done > 1 ? "s" : "") + "." : "Choisis un jour pour commencer.") + '</p>' +
+    (next ? '<button class="cta" data-open="' + next.id + '">' + (done || doing ? "Reprendre au Jour " : "Commencer au Jour ") + next.id + ' →</button>' : '') +
+    '</section><div class="weeks">' + weeks + '</div>' + galleryHtml() +
+    '<div class="grid">' + (cards || '<div class="empty" style="grid-column:1/-1">Aucun jour ne correspond à ta recherche.</div>') + '</div>';
+}
+
+function renderDetail(d){
+  const s = getStatus(d.id);
+  const prev = dayById(d.id - 1), nextD = dayById(d.id + 1);
+  const sec = (icon, title, body) =>
+    '<section class="sec"><h3><span class="i">' + icon + '</span>' + title + '</h3><p>' + esc(body) + '</p></section>';
+  $("#view").innerHTML =
+    '<div class="crumbs"><button data-home>Accueil</button><span>›</span><span>' + esc(WEEKS.find(w => w.n === d.week).label) + '</span><span>›</span><span>Jour ' + d.id + '</span></div>' +
+    '<article class="head">' + strip(d.colors) + '<div class="head-b">' +
+      '<div class="eyebrow"><span class="pill">Jour ' + d.id + ' / ' + TOTAL + '</span><span class="pill alt">' + esc(CAT_LABEL[d.cat]) + '</span></div>' +
+      '<h2>' + esc(d.fete) + '</h2><p class="sub">' + esc(d.livrable) + '</p>' +
+      '<div class="actions">' +
+        '<label class="check' + (s === "done" ? " on" : "") + '"><input type="checkbox" id="doneBox"' + (s === "done" ? " checked" : "") + '> Complété</label>' +
+        '<select class="sel" id="statusSel" aria-label="Statut du jour">' +
+          Object.keys(STATUS).map(k => '<option value="' + k + '"' + (k === s ? " selected" : "") + '>' + STATUS[k] + '</option>').join("") + '</select>' +
+        '<button class="btn primary" id="copyBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>Copier le brief</button>' +
+      '</div></div></article>' +
+    '<div class="sections">' +
+      sec("🏢", "Contexte &amp; Client", d.contexte) +
+      sec("🎯", "Objectif du design", d.objectif) +
+      sec("📦", "Livrables attendus", d.livrables) +
+      sec("🧩", "Contraintes techniques &amp; Figma", d.contraintes) +
+      '<section class="sec"><h3><span class="i">🎨</span>Consignes de style</h3><p>' + esc(d.style) + '</p>' +
+        '<div class="sw">' + d.colors.map(c => '<button data-color="' + esc(c) + '" title="Copier ' + esc(c) + '"><i style="background:' + esc(c) + '"></i>' + esc(c) + '</button>').join("") + '</div></section>' +
+    '</div>' +
+    designSection(d) +
+    '<div class="pager">' +
+      (prev ? '<button class="btn" data-open="' + prev.id + '">← Jour ' + prev.id + '</button>' : '<span></span>') +
+      (nextD ? '<button class="btn" data-open="' + nextD.id + '">Jour ' + nextD.id + ' →</button>' : '<span></span>') +
+    '</div>';
+}
+
+function renderView(){
+  const id = currentId();
+  if (id) renderDetail(dayById(id)); else renderHome();
+  $("#content").scrollTop = 0;
+}
+/* Mise à jour sans perdre le défilement ni le focus de la recherche */
+function refresh(){
+  renderProgress(); renderList();
+  const id = currentId();
+  if (id){
+    const s = getStatus(id);
+    const box = $("#doneBox"), sel = $("#statusSel");
+    if (box){ box.checked = s === "done"; box.closest(".check").classList.toggle("on", s === "done"); }
+    if (sel) sel.value = s;
+  } else {
+    const y = $("#content").scrollTop;
+    renderHome(); $("#content").scrollTop = y;
+  }
+}
+
+/* ============================================================
+   ÉVÉNEMENTS
+   ============================================================ */
+function go(id){ location.hash = id ? "#/jour/" + id : "#/"; }
+function closeNav(){ document.body.classList.remove("nav-open"); }
+
+document.addEventListener("click", e => {
+  const t = e.target;
+  const open = t.closest("[data-open]");
+  if (open){ go(parseInt(open.dataset.open, 10)); closeNav(); return; }
+  if (t.closest("[data-home]") || t.closest("#homeBtn")){ go(0); closeNav(); return; }
+  const chip = t.closest(".chip");
+  if (chip){ filters.cat = chip.dataset.cat; renderChips(); renderList(); if (!currentId()) refresh(); return; }
+  if (t.closest("[data-clear]")){
+    filters.cat = "all"; filters.status = "all"; filters.q = "";
+    $("#q").value = ""; $("#statusFilter").value = "all";
+    renderChips(); refresh(); return;
+  }
+  const col = t.closest("[data-color]");
+  if (col){ copyText(col.dataset.color, "Couleur " + col.dataset.color + " copiée"); return; }
+  if (t.closest("#copyBtn")){
+    const d = dayById(currentId());
+    if (d) copyText(briefText(d), "Brief du Jour " + d.id + " copié dans le presse-papier");
+    return;
+  }
+  if (t.closest("#menuBtn")){ document.body.classList.toggle("nav-open"); return; }
+  if (t.closest("#scrim")){ closeNav(); return; }
+  if (t.closest("#resetBtn")){
+    if (confirm("Réinitialiser toute ta progression ?")){ progress = {}; saveProgress(); refresh(); toast("Progression réinitialisée"); }
+  }
+});
+
+document.addEventListener("change", e => {
+  const id = currentId();
+  if (e.target.id === "doneBox" && id) setStatus(id, e.target.checked ? "done" : "todo");
+  else if (e.target.id === "statusSel" && id) setStatus(id, e.target.value);
+  else if (e.target.id === "statusFilter"){ filters.status = e.target.value; refresh(); }
+});
+
+$("#q").addEventListener("input", e => {
+  filters.q = norm(e.target.value.trim());
+  renderList();
+  if (!currentId()) { const y = $("#content").scrollTop; renderHome(); $("#content").scrollTop = y; }
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeNav();
+  if (e.target.matches("input, select, textarea")) return;
+  const id = currentId();
+  if (!id) return;
+  if (e.key === "ArrowRight" && dayById(id + 1)) go(id + 1);
+  if (e.key === "ArrowLeft" && dayById(id - 1)) go(id - 1);
+});
+
+window.addEventListener("hashchange", () => { renderView(); renderList(); });
+
+/* Synchronisation entre onglets */
+window.addEventListener("storage", e => {
+  if (e.key === STORE_KEY){
+    try { progress = JSON.parse(e.newValue || "{}") || {}; } catch (err) { progress = {}; }
+    refresh();
+  }
+});
+
+/* ============================================================
+   DESIGN DU JOUR — publication
+   ============================================================ */
+const DESIGN_KEY = "figma30.designs.v1";
+let designs = {};
+try { designs = JSON.parse(localStorage.getItem(DESIGN_KEY) || "{}") || {}; } catch (e) { designs = {}; }
+const TOOL_SUGGEST = ["Figma", "FigJam", "Illustrator", "Photoshop", "Procreate", "Blender", "After Effects", "Spline"];
+const TAG_SUGGEST = ["Auto Layout", "Variants", "Prototype", "Variables", "Mobile", "Landing page", "Dark mode", "Animation", "Illustration", "Typographie"];
+const MAX_ITEMS = 10;
+let draft = null, editId = 0, confirmId = 0, publishing = false;
+
+function saveDesigns(){
+  try { localStorage.setItem(DESIGN_KEY, JSON.stringify(designs)); return true; } catch (e) { return false; }
+}
+function getDraft(id){
+  if (!draft || draft.id !== id){
+    const s = designs[id];
+    draft = s
+      ? {id, image:s.image, title:s.title, desc:s.desc, tools:s.tools.slice(), tags:s.tags.slice(), markDone:false}
+      : {id, image:"", title:"", desc:"", tools:["Figma"], tags:[], markDone:getStatus(id) !== "done"};
+  }
+  return draft;
+}
+function slug(s){ return norm(s).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "design"; }
+function missing(dr){
+  const m = [];
+  if (!dr.image) m.push("une image");
+  if (dr.title.trim().length < 3) m.push("un titre (3 caractères min.)");
+  return m;
+}
+function hintText(dr){
+  const m = missing(dr);
+  return m.length ? "Il manque : " + m.join(" et ") + "." : "Tout est prêt : ton design sera enregistré dans ta galerie.";
+}
+function shareText(id){
+  const d = dayById(id), s = designs[id];
+  return "Design du Jour " + id + " — " + d.fete + " : " + s.title + "\n" +
+    (s.desc ? s.desc + "\n" : "") +
+    "Outils : " + (s.tools.join(", ") || "—") +
+    (s.tags.length ? "\n" + s.tags.map(t => "#" + t.replace(/[^\p{L}\p{N}]+/gu, "")).join(" ") : "") +
+    "\n#Figma30Jours";
+}
+function optsHtml(kind, suggest, selected){
+  const all = suggest.concat(selected.filter(v => !suggest.includes(v)));
+  return all.map(v => '<button type="button" class="opt" data-d-toggle="' + kind + '" data-v="' + esc(v) + '" aria-pressed="' + selected.includes(v) + '">' + esc(v) + '</button>').join("");
+}
+
+function designInner(id){
+  const d = dayById(id), s = designs[id], isPub = !!s && editId !== id;
+  const badge = isPub ? '<span class="pub-badge">● Publié</span>' : '<span class="pub-badge draft">' + (s ? "Modification" : "Brouillon") + '</span>';
+  const head = '<div class="d-head"><h3><span class="i">🖼️</span>Design du Jour</h3>' + badge + '</div>';
+
+  if (isPub){
+    const when = new Date(s.at).toLocaleString("fr-FR", {day:"numeric", month:"long", year:"numeric", hour:"2-digit", minute:"2-digit"});
+    return head +
+      (confirmId === id ? '<div class="confirm" role="status">✅ <span>Ton design du Jour ' + id + ' est publié dans ta galerie. Bravo !</span></div>' : '') +
+      '<div class="pubcard"><div class="pubimg"><img src="' + esc(s.image) + '" alt="' + esc(s.title) + '"></div><div>' +
+        '<h4>' + esc(s.title) + '</h4>' +
+        (s.desc ? '<p class="pdesc">' + esc(s.desc) + '</p>' : '') +
+        '<div class="meta"><b>Outils utilisés</b>' + (s.tools.length ? s.tools.map(t => '<span class="pill alt">' + esc(t) + '</span>').join("") : '<span class="hint">Non renseignés</span>') + '</div>' +
+        '<div class="meta"><b>Tags &amp; catégories</b>' + (s.tags.length ? s.tags.map(t => '<span class="pill">#' + esc(t) + '</span>').join("") : '<span class="hint">Aucun tag</span>') + '</div>' +
+        '<p class="hint">Publié le ' + esc(when) + '</p>' +
+      '</div></div>' +
+      '<div class="pub-row">' +
+        '<button type="button" class="btn primary" data-d-act="share">Partager</button>' +
+        '<button type="button" class="btn" data-d-act="dl">Télécharger l\'image</button>' +
+        '<button type="button" class="btn" data-d-act="edit">Modifier</button>' +
+        '<button type="button" class="btn danger" data-d-act="unpublish">Retirer</button>' +
+      '</div>';
+  }
+
+  const dr = getDraft(id), ok = !missing(dr).length;
+  const drop = dr.image
+    ? '<img src="' + esc(dr.image) + '" alt="Aperçu du design"><span class="chg">Changer l\'image</span><button type="button" class="rm" data-d-act="rmimg" aria-label="Retirer l\'image">✕</button>'
+    : '<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg><b>Glisse ton design ici</b><span>ou clique pour importer · PNG, JPG, WebP</span><span>Tu peux aussi coller une image (Ctrl/Cmd + V)</span></div>';
+  return head +
+    '<p class="d-intro">Dépose ton rendu du Jour ' + id + ' (' + esc(d.fete) + '), décris-le puis publie-le dans ta galerie.</p>' +
+    '<div class="d-body">' +
+      '<div><div class="drop' + (dr.image ? " has" : "") + '" id="drop"><input type="file" id="dFile" accept="image/*" aria-label="Importer l\'image du design">' + drop + '</div></div>' +
+      '<div>' +
+        '<div class="fld"><label for="dTitle">Titre du design</label><input type="text" id="dTitle" maxlength="60" placeholder="Ex. : Carte de vœux Maison Aurélie" value="' + esc(dr.title) + '"></div>' +
+        '<div class="fld"><label for="dDesc">Description rapide</label><textarea id="dDesc" rows="3" maxlength="280" placeholder="Ton intention, ta direction artistique, ce que tu as appris…">' + esc(dr.desc) + '</textarea><span class="cnt" id="dCount">' + dr.desc.length + ' / 280</span></div>' +
+        '<div class="fld"><span class="lb">Outils utilisés</span><div class="opts">' + optsHtml("tool", TOOL_SUGGEST, dr.tools) + '</div>' +
+          '<div class="addrow"><input type="text" id="dToolNew" maxlength="24" placeholder="Autre outil…" aria-label="Ajouter un outil"><button type="button" class="btn" data-d-add="tool">Ajouter</button></div></div>' +
+        '<div class="fld"><span class="lb">Tags &amp; catégories</span><div class="opts">' + optsHtml("tag", TAG_SUGGEST, dr.tags) + '</div>' +
+          '<div class="addrow"><input type="text" id="dTagNew" maxlength="24" placeholder="Autre tag (Entrée pour valider)…" aria-label="Ajouter un tag"><button type="button" class="btn" data-d-add="tag">Ajouter</button></div></div>' +
+        '<label class="mark"><input type="checkbox" id="dMarkDone"' + (dr.markDone ? " checked" : "") + '> Marquer le Jour ' + id + ' comme terminé à la publication</label>' +
+      '</div>' +
+    '</div>' +
+    '<div class="pub-row">' +
+      '<button type="button" class="btn-pub" id="dPublish" aria-disabled="' + (!ok) + '">' + (s ? "Mettre à jour le design" : "Publier le design") + ' →</button>' +
+      (s ? '<button type="button" class="btn" data-d-act="cancel">Annuler</button>' : '') +
+      '<span class="hint" id="dHint" role="status">' + esc(hintText(dr)) + '</span>' +
+    '</div>';
+}
+function designSection(d){
+  return '<section class="sec design" id="designBox" data-day="' + d.id + '">' + designInner(d.id) + '</section>';
+}
+function renderDesign(id){
+  const b = $("#designBox");
+  if (b && parseInt(b.dataset.day, 10) === id) b.innerHTML = designInner(id);
+}
+function syncPublish(id){
+  const dr = getDraft(id), btn = $("#dPublish"), hint = $("#dHint");
+  if (btn) btn.setAttribute("aria-disabled", String(!!missing(dr).length));
+  if (hint){ hint.textContent = hintText(dr); hint.classList.remove("err"); }
+}
+function galleryHtml(){
+  const items = DAYS.filter(d => designs[d.id]);
+  if (!items.length) return "";
+  return '<section class="gal"><h3>Ma galerie · ' + items.length + " design" + (items.length > 1 ? "s" : "") + " publié" + (items.length > 1 ? "s" : "") + '</h3><div class="gal-grid">' +
+    items.map(d => '<button class="gt" data-open="' + d.id + '"><img src="' + esc(designs[d.id].image) + '" alt="' + esc(designs[d.id].title) + '"><div><b>Jour ' + d.id + '</b><span>' + esc(designs[d.id].title) + '</span></div></button>').join("") +
+    '</div></section>';
+}
+
+function loadImage(file, id){
+  if (!file || !/^image\//.test(file.type)){ toast("Choisis un fichier image (PNG, JPG, WebP…)"); return; }
+  if (file.size > 20 * 1024 * 1024){ toast("Image trop lourde (20 Mo maximum)."); return; }
+  const fr = new FileReader();
+  fr.onerror = () => toast("Impossible de lire ce fichier.");
+  fr.onload = () => {
+    const img = new Image();
+    img.onerror = () => toast("Image illisible ou format non pris en charge.");
+    img.onload = () => {
+      const k = Math.min(1, 1400 / Math.max(img.width, img.height));
+      const w = Math.max(1, Math.round(img.width * k)), h = Math.max(1, Math.round(img.height * k));
+      const c = document.createElement("canvas"); c.width = w; c.height = h;
+      const x = c.getContext("2d");
+      x.fillStyle = "#ffffff"; x.fillRect(0, 0, w, h); x.drawImage(img, 0, 0, w, h);
+      getDraft(id).image = c.toDataURL("image/jpeg", 0.85);
+      renderDesign(id);
+    };
+    img.src = fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+
+function addCustom(id, kind){
+  const sel = kind === "tool" ? "#dToolNew" : "#dTagNew";
+  const inp = $(sel); if (!inp) return;
+  const raw = inp.value.trim().replace(/^#/, "");
+  if (!raw) return;
+  const dr = getDraft(id), list = kind === "tool" ? dr.tools : dr.tags, sug = kind === "tool" ? TOOL_SUGGEST : TAG_SUGGEST;
+  const found = sug.concat(list).find(v => v.toLowerCase() === raw.toLowerCase());
+  const v = found || raw;
+  if (!list.includes(v)){
+    if (list.length >= MAX_ITEMS){ toast("Maximum " + MAX_ITEMS + " éléments."); return; }
+    list.push(v);
+  }
+  renderDesign(id);
+  const n = $(sel); if (n) n.focus();
+}
+
+function publish(id){
+  if (publishing) return;
+  const dr = getDraft(id), btn = $("#dPublish"), hint = $("#dHint");
+  const m = missing(dr);
+  if (m.length){
+    if (hint){ hint.textContent = "Il manque : " + m.join(" et ") + "."; hint.classList.add("err"); }
+    if (!dr.image){ const f = $("#drop"); if (f) f.scrollIntoView({behavior:"smooth", block:"center"}); }
+    else { const t = $("#dTitle"); if (t) t.focus(); }
+    return;
+  }
+  publishing = true;
+  btn.classList.add("loading"); btn.textContent = "Publication…";
+  setTimeout(() => {
+    const previous = designs[id];
+    designs[id] = {title:dr.title.trim(), desc:dr.desc.trim(), tools:dr.tools.slice(), tags:dr.tags.slice(), image:dr.image, at:Date.now()};
+    if (!saveDesigns()){
+      if (previous) designs[id] = previous; else delete designs[id];
+      publishing = false;
+      toast("Stockage plein : retire un ancien design ou choisis une image plus légère.");
+      renderDesign(id); return;
+    }
+    const mark = dr.markDone;
+    btn.classList.remove("loading"); btn.classList.add("ok"); btn.textContent = "✓ Publié !";
+    toast("Design du Jour " + id + " publié");
+    setTimeout(() => {
+      publishing = false; editId = 0; confirmId = id; draft = null;
+      if (mark) setStatus(id, "done");
+      renderDesign(id);
+    }, 700);
+  }, 600);
+}
+
+function shareDesign(id){
+  const s = designs[id], text = shareText(id);
+  if (navigator.share){
+    navigator.share({title:s.title, text}).catch(err => { if (!err || err.name !== "AbortError") copyText(text, "Texte de partage copié"); });
+  } else copyText(text, "Texte de partage copié dans le presse-papier");
+}
+
+document.addEventListener("click", e => {
+  const t = e.target, box = t.closest("#designBox");
+  if (!box) return;
+  const id = parseInt(box.dataset.day, 10);
+  const tg = t.closest("[data-d-toggle]");
+  if (tg){
+    const dr = getDraft(id), list = tg.dataset.dToggle === "tool" ? dr.tools : dr.tags, v = tg.dataset.v, i = list.indexOf(v);
+    if (i > -1) list.splice(i, 1); else if (list.length < MAX_ITEMS) list.push(v); else toast("Maximum " + MAX_ITEMS + " éléments.");
+    renderDesign(id); return;
+  }
+  const add = t.closest("[data-d-add]");
+  if (add){ addCustom(id, add.dataset.dAdd); return; }
+  if (t.closest("#dPublish")){ publish(id); return; }
+  const act = t.closest("[data-d-act]");
+  if (!act) return;
+  switch (act.dataset.dAct){
+    case "rmimg": getDraft(id).image = ""; renderDesign(id); break;
+    case "share": shareDesign(id); break;
+    case "dl": {
+      const s = designs[id], a = document.createElement("a");
+      a.href = s.image; a.download = "jour-" + pad(id) + "-" + slug(s.title) + ".jpg";
+      document.body.appendChild(a); a.click(); a.remove(); break;
+    }
+    case "edit": editId = id; confirmId = 0; draft = null; renderDesign(id); break;
+    case "cancel": editId = 0; draft = null; renderDesign(id); break;
+    case "unpublish":
+      if (confirm("Retirer ce design de ta galerie ?")){
+        delete designs[id]; saveDesigns(); editId = 0; confirmId = 0; draft = null;
+        renderDesign(id); toast("Design retiré de la galerie");
+      }
+      break;
+  }
+});
+
+document.addEventListener("input", e => {
+  const box = e.target.closest && e.target.closest("#designBox");
+  if (!box) return;
+  const id = parseInt(box.dataset.day, 10), dr = getDraft(id);
+  if (e.target.id === "dTitle"){ dr.title = e.target.value; syncPublish(id); }
+  else if (e.target.id === "dDesc"){ dr.desc = e.target.value; const c = $("#dCount"); if (c) c.textContent = dr.desc.length + " / 280"; }
+});
+
+document.addEventListener("change", e => {
+  const box = e.target.closest && e.target.closest("#designBox");
+  if (!box) return;
+  const id = parseInt(box.dataset.day, 10);
+  if (e.target.id === "dFile"){ loadImage(e.target.files && e.target.files[0], id); e.target.value = ""; }
+  else if (e.target.id === "dMarkDone") getDraft(id).markDone = e.target.checked;
+});
+
+document.addEventListener("keydown", e => {
+  const tid = e.target.id;
+  if (tid !== "dToolNew" && tid !== "dTagNew") return;
+  if (e.key === "Enter" || (e.key === "," && tid === "dTagNew")){
+    e.preventDefault();
+    const box = e.target.closest("#designBox");
+    if (box) addCustom(parseInt(box.dataset.day, 10), tid === "dToolNew" ? "tool" : "tag");
+  }
+});
+
+["dragenter", "dragover"].forEach(ev => document.addEventListener(ev, e => {
+  const z = e.target.closest && e.target.closest("#drop");
+  if (z){ e.preventDefault(); z.classList.add("over"); }
+}));
+document.addEventListener("dragleave", e => {
+  const z = e.target.closest && e.target.closest("#drop");
+  if (z) z.classList.remove("over");
+});
+document.addEventListener("drop", e => {
+  const z = e.target.closest && e.target.closest("#drop");
+  if (!z) return;
+  e.preventDefault(); z.classList.remove("over");
+  const box = $("#designBox");
+  if (box) loadImage(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0], parseInt(box.dataset.day, 10));
+});
+document.addEventListener("paste", e => {
+  const box = $("#designBox");
+  if (!box || !$("#drop")) return;
+  const files = Array.from((e.clipboardData && e.clipboardData.files) || []);
+  const f = files.find(x => /^image\//.test(x.type));
+  if (f){ e.preventDefault(); loadImage(f, parseInt(box.dataset.day, 10)); }
+});
+window.addEventListener("hashchange", () => { confirmId = 0; editId = 0; });
+
+/* ============================================================
+   DÉMARRAGE
+   ============================================================ */
+renderChips();
+renderProgress();
+renderList();
+renderView();
+</script>
+</body>
+</html>
